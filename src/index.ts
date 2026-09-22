@@ -10,25 +10,45 @@ export const searchInputSchema = z
   .strict();
 export type StockImageSearch = z.input<typeof searchInputSchema>;
 export type StockImageRequest = z.output<typeof searchInputSchema>;
-export interface StockImage {
-  provider: string;
-  id: string;
-  /** Provider-supplied description, not a verified visual classification. */
-  description: string | null;
-  width: number;
-  height: number;
-  urls: { thumbnail: string; display: string; original: string };
-  sourceUrl: string;
-  photographer: { name: string; url: string };
-  attribution: {
-    text: string;
-    providerName: string;
-    providerUrl: string;
-    required: boolean;
-  };
-  license: { name: string; url: string };
-  usage: { hotlinkRequired: boolean; selectionNotificationRequired: boolean };
-}
+const publicHttpsUrl = z
+  .string()
+  .url()
+  .refine((value) => {
+    const url = new URL(value);
+    return (
+      url.protocol === "https:" && !url.username && !url.password && !url.port
+    );
+  });
+/** Transport/persistence schema. Descriptions remain untrusted provider metadata. */
+export const stockImageSchema = z.object({
+  provider: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/),
+  id: z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/),
+  description: z.string().max(4000).nullable(),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  urls: z.object({
+    thumbnail: publicHttpsUrl,
+    display: publicHttpsUrl,
+    original: publicHttpsUrl,
+  }),
+  sourceUrl: publicHttpsUrl,
+  photographer: z.object({
+    name: z.string().min(1).max(300),
+    url: publicHttpsUrl,
+  }),
+  attribution: z.object({
+    text: z.string().max(1000),
+    providerName: z.string().max(100),
+    providerUrl: publicHttpsUrl,
+    required: z.boolean(),
+  }),
+  license: z.object({ name: z.string().max(300), url: publicHttpsUrl }),
+  usage: z.object({
+    hotlinkRequired: z.boolean(),
+    selectionNotificationRequired: z.boolean(),
+  }),
+});
+export type StockImage = z.infer<typeof stockImageSchema>;
 export interface StockImagePage {
   images: StockImage[];
   page: number;

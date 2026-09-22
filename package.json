@@ -1,6 +1,6 @@
 {
   "name": "@absolutejs/stock-images",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provider-neutral stock photo search, selection, attribution and typed failure contracts.",
   "type": "module",
   "license": "Apache-2.0",
