@@ -1,6 +1,6 @@
 {
   "name": "@absolutejs/stock-images",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Provider-neutral stock photo search, selection, attribution and typed failure contracts.",
   "type": "module",
   "license": "Apache-2.0",
@@ -40,7 +40,7 @@
   "dependencies": {
     "@absolutejs/manifest": "^0.10.0",
     "@sinclair/typebox": "^0.34.0",
-    "zod": "4.4.3"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
